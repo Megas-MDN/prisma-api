@@ -6,6 +6,10 @@ const app = Express();
 app.use(Express.json());
 app.use(cors());
 
+app.get('/health', (_req, res) =>
+  res.status(200).send({ message: `Server online ${process.env.PORT || 3001}` })
+);
+
 app.use(router);
 
 export default app;
