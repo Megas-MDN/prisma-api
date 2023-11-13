@@ -1,16 +1,11 @@
-import Express, { Request, Response } from 'express';
+import Express from 'express';
 import cors from 'cors';
+import router from './routes';
 
 const app = Express();
 app.use(Express.json());
 app.use(cors());
 
-app.get('/', (_req: Request, res: Response) => {
-  return res.send('Express Typescript on Vercel');
-});
-
-app.get('/ping', (_req: Request, res: Response) => {
-  return res.send('pong 🏓');
-});
+app.use(router);
 
 export default app;
