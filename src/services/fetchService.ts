@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const fetchPostSocket = async () => {
+const fetchService = async (destiny: string) => {
   try {
     const res = await axios({
       method: 'POST',
@@ -10,7 +9,7 @@ const fetchPostSocket = async () => {
         'Content-Type': 'application/json',
       },
       data: {
-        destiny: 'fetchPost',
+        destiny,
         message: 'Go fetch the posts',
       },
     });
@@ -20,6 +19,7 @@ const fetchPostSocket = async () => {
     return error.message;
   }
 };
+const fetchPostSocket = async () => fetchService('fetchPost');
 
 export default {
   fetchPostSocket,

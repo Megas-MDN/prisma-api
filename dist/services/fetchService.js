@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
-const fetchPostSocket = async () => {
+const fetchService = async (destiny) => {
     try {
         const res = await (0, axios_1.default)({
             method: 'POST',
@@ -14,7 +14,7 @@ const fetchPostSocket = async () => {
                 'Content-Type': 'application/json',
             },
             data: {
-                destiny: 'fetchPost',
+                destiny,
                 message: 'Go fetch the posts',
             },
         });
@@ -25,6 +25,7 @@ const fetchPostSocket = async () => {
         return error.message;
     }
 };
+const fetchPostSocket = async () => fetchService('fetchPost');
 exports.default = {
     fetchPostSocket,
 };
