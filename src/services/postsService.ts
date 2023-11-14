@@ -8,10 +8,9 @@ const getAllUsers = async () => {
 
 const createPost = async (newPost: PostFromClient) => {
   const postToCreate = {
-    id: newPost.id,
     title: newPost.title,
     content: newPost.content,
-    user_id: newPost.userId,
+    user_id: newPost.user_id,
   };
   const post = await postsModel.createPost(postToCreate);
   return post;

@@ -1,12 +1,12 @@
+import { PostFromClient } from '../../src/interfaces';
 import prisma from './';
-import { Post } from '@prisma/client';
 
 const getAllUsers = async () => {
   const users = await prisma.post.findMany();
   return users;
 };
 
-const createPost = async (newPost: Post) => {
+const createPost = async (newPost: PostFromClient) => {
   const post = await prisma.post.create({
     data: {
       ...newPost,
