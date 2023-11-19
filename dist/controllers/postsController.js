@@ -10,8 +10,8 @@ const getAllUsers = async (req, res) => {
     return res.status(200).send(users);
 };
 const createPost = async (req, res, next) => {
-    const { title, content, user_id } = req.body;
-    if (!title || !content || !user_id) {
+    const { title, content, userId } = req.body;
+    if (!title || !content || !userId) {
         return next({
             status: 400,
             message: 'Filds id, title, contentt, userId are required',
@@ -20,7 +20,7 @@ const createPost = async (req, res, next) => {
     const newPost = {
         title,
         content,
-        user_id,
+        userId,
     };
     const post = await postsService_1.default.createPost(newPost);
     fetchService_1.default.fetchPostSocket();

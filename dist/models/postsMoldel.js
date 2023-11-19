@@ -5,7 +5,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = __importDefault(require("./"));
 const getAllUsers = async () => {
-    const users = await _1.default.post.findMany();
+    const users = await _1.default.post.findMany({
+        where: {
+            deletedAt: null,
+        },
+        select: {
+            id: true,
+            title: true,
+            content: true,
+            userId: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
     return users;
 };
 const createPost = async (newPost) => {

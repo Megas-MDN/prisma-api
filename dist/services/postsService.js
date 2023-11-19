@@ -12,7 +12,7 @@ const createPost = async (newPost) => {
     const postToCreate = {
         title: newPost.title,
         content: newPost.content,
-        user_id: newPost.user_id,
+        userId: newPost.userId,
     };
     const post = await postsMoldel_1.default.createPost(postToCreate);
     return post;

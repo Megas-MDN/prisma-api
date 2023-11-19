@@ -10,7 +10,7 @@ const createPost = async (newPost: PostFromClient) => {
   const postToCreate = {
     title: newPost.title,
     content: newPost.content,
-    user_id: newPost.user_id,
+    userId: newPost.userId,
   };
   const post = await postsModel.createPost(postToCreate);
   return post;

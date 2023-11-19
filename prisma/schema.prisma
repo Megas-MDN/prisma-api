@@ -11,23 +11,132 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(cuid())
-  name       String
-  email      String    @unique @db.VarChar(255)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @default(now())
-  deleted_at DateTime?
-  Post       Post[]
+  id             String           @id @default(cuid())
+  name           String           @db.VarChar(255)
+  email          String           @unique @db.VarChar(255)
+  password       String           @db.VarChar(255)
+  picture        String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  deletedAt      DateTime?
+  Post           Post[]
+  Cluster        Cluster[]
+  ClusterUsers   ClusterUsers[]
+  Group          Group[]
+  Modered        Modered[]
+  CommentAndLike CommentAndLike[]
 
   @@map("users")
+}
+
+model Cluster {
+  id      String @id @default(cuid())
+  ownerId User   @relation(fields: [userId], references: [id])
+  name    String @db.VarChar(255)
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
+  deletedAt    DateTime?
+  userId       String
+  ClusterUsers ClusterUsers[]
+  Group        Group[]
+
+  @@map("cluster")
+}
+
+model ClusterUsers {
+  id        String  @id @default(cuid())
+  userId    String
+  clusterId String
+  user      User    @relation(fields: [userId], references: [id])
+  cluester  Cluster @relation(fields: [clusterId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@map("cluster_user")
+}
+
+model Group {
+  id             String           @id @default(cuid())
+  clusterId      String
+  cluster        Cluster          @relation(fields: [clusterId], references: [id])
+  ownerId        String
+  name           String
+  description    String?
+  user           User             @relation(fields: [ownerId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  deletedAt      DateTime?
+  Modered        Modered[]
+  Recomend       Recomend[]
+  CommentAndLike CommentAndLike[]
+
+  @@map("group")
+}
+
+model Modered {
+  id                String  @id @default(uuid())
+  userId            String
+  groupId           String
+  user              User    @relation(fields: [userId], references: [id])
+  cluester          Group   @relation(fields: [groupId], references: [id])
+  letJoin           Boolean
+  moderedPosts      Boolean
+  letDeleteComments Boolean
+  letMuteUser       Boolean
+  letDeleteUser     Boolean
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@map("modered")
+}
+
+model Recomend {
+  id      String @id @default(uuid())
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@map("recomend")
 }
 
 model Post {
   id      String @id @default(uuid())
   title   String
   content String @db.VarChar(255)
-  user_id String
-  author  User   @relation(fields: [user_id], references: [id])
+  userId  String
+  author  User   @relation(fields: [userId], references: [id])
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  deletedAt      DateTime?
+  CommentAndLike CommentAndLike[]
 
   @@map("posts")
+}
+
+model CommentAndLike {
+  id      String   @id @default(uuid())
+  groupId String
+  postId  String
+  userId  String
+  content String?
+  like    Boolean?
+
+  post  Post  @relation(fields: [postId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@map("comment_and_like")
 }
