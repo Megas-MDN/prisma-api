@@ -12,6 +12,9 @@
     "start:dev": " rimraf dist && tsc && node ./dist/server.js",
     "start": "node ./dist/server.js"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",

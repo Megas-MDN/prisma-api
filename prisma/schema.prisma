@@ -16,6 +16,7 @@ model User {
   email          String           @unique @db.VarChar(255)
   password       String           @db.VarChar(255)
   picture        String?
+  cover          String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now())
   deletedAt      DateTime?
@@ -30,14 +31,13 @@ model User {
 }
 
 model Cluster {
-  id      String @id @default(cuid())
-  ownerId User   @relation(fields: [userId], references: [id])
-  name    String @db.VarChar(255)
-
+  id           String         @id @default(cuid())
+  name         String         @db.VarChar(255)
+  ownerId      String
+  userId       User           @relation(fields: [ownerId], references: [id])
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @default(now())
   deletedAt    DateTime?
-  userId       String
   ClusterUsers ClusterUsers[]
   Group        Group[]
 
@@ -45,7 +45,7 @@ model Cluster {
 }
 
 model ClusterUsers {
-  id        String  @id @default(cuid())
+  id        String  @default(cuid())
   userId    String
   clusterId String
   user      User    @relation(fields: [userId], references: [id])
@@ -55,33 +55,37 @@ model ClusterUsers {
   updatedAt DateTime  @default(now())
   deletedAt DateTime?
 
+  @@id([id, userId, clusterId])
   @@map("cluster_user")
 }
 
 model Group {
-  id             String           @id @default(cuid())
-  clusterId      String
-  cluster        Cluster          @relation(fields: [clusterId], references: [id])
-  ownerId        String
-  name           String
-  description    String?
-  user           User             @relation(fields: [ownerId], references: [id])
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now())
-  deletedAt      DateTime?
-  Modered        Modered[]
-  Recomend       Recomend[]
-  CommentAndLike CommentAndLike[]
+  id                String           @id @default(cuid())
+  clusterId         String           @unique
+  cluster           Cluster          @relation(fields: [clusterId], references: [id])
+  ownerId           String
+  name              String
+  description       String?
+  picture           String?
+  cover             String?
+  user              User             @relation(fields: [ownerId], references: [id])
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @default(now())
+  deletedAt         DateTime?
+  Modered           Modered[]
+  CommentAndLike    CommentAndLike[]
+  mainRecomendGroup Recomend[]       @relation("main_group")
+  recomendGroup     Recomend[]       @relation("recomend_group")
 
   @@map("group")
 }
 
 model Modered {
-  id                String  @id @default(uuid())
+  id                String  @id @default(cuid())
   userId            String
   groupId           String
   user              User    @relation(fields: [userId], references: [id])
-  cluester          Group   @relation(fields: [groupId], references: [id])
+  group             Group   @relation(fields: [groupId], references: [id])
   letJoin           Boolean
   moderedPosts      Boolean
   letDeleteComments Boolean
@@ -96,23 +100,27 @@ model Modered {
 }
 
 model Recomend {
-  id      String @id @default(uuid())
-  groupId String
-  group   Group  @relation(fields: [groupId], references: [id])
+  id              String @default(cuid())
+  groupId         String
+  recomendGroupId String
+  group           Group  @relation(name: "main_group", fields: [groupId], references: [id])
+  recomend        Group  @relation(name: "recomend_group", fields: [recomendGroupId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
   deletedAt DateTime?
 
+  @@id([id, groupId, recomendGroupId])
   @@map("recomend")
 }
 
 model Post {
-  id      String @id @default(uuid())
+  id      String  @id @default(cuid())
   title   String
-  content String @db.VarChar(255)
+  content String? @db.VarChar(255)
+  file    String?
   userId  String
-  author  User   @relation(fields: [userId], references: [id])
+  author  User    @relation(fields: [userId], references: [id])
 
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now())
