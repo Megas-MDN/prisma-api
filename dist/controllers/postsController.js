@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const postsService_1 = __importDefault(require("../../src/services/postsService"));
-const fetchService_1 = __importDefault(require("../../src/services/fetchService"));
+const postsService_1 = __importDefault(require("../services/postsService"));
+const fetchService_1 = __importDefault(require("../services/fetchService"));
 const getAllUsers = async (req, res) => {
     const users = await postsService_1.default.getAllUsers();
     return res.status(200).send(users);

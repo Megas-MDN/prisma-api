@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import postsService from '../../src/services/postsService';
+import postsService from '../services/postsService';
 import { PostFromClient } from '../../src/interfaces';
-import fetchSocket from '../../src/services/fetchService';
+import fetchSocket from '../services/fetchService';
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await postsService.getAllUsers();
   return res.status(200).send(users);

@@ -1,5 +1,5 @@
 import { PostFromClient } from '../../src/interfaces';
-import postsModel from '../../src/models/postsMoldel';
+import postsModel from '../models/postsMoldel';
 
 const getAllUsers = async () => {
   const users = await postsModel.getAllUsers();

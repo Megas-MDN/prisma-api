@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const postsMoldel_1 = __importDefault(require("../../src/models/postsMoldel"));
+const postsMoldel_1 = __importDefault(require("../models/postsMoldel"));
 const getAllUsers = async () => {
     const users = await postsMoldel_1.default.getAllUsers();
     return users;
