@@ -1,6 +1,7 @@
 import Express from 'express';
 import cors from 'cors';
 import router from './routes';
+import model from './seedCreator';
 
 const app = Express();
 app.use(Express.json());
@@ -12,4 +13,5 @@ app.get('/health', (_req, res) =>
 
 app.use(router);
 
+model.readAllTables({ logTables: true, allSeeds: true, seedFile: true });
 export default app;

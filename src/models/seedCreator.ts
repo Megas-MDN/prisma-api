@@ -24,7 +24,7 @@ const writeTable = async (table: string, value: Array<Prisma.ModelName>) => {
   const tableNameCamelCase = table.charAt(0).toLowerCase() + table.slice(1);
   return fs.writeFile(
     `./prisma/seeds/${tableNameCamelCase}.ts`,
-    `export const ${tableNameCamelCase} = ${JSON.stringify(value)};`
+    `export const ${tableNameCamelCase} = ${JSON.stringify(value, null, 2)};`
   );
 };
 
@@ -113,10 +113,10 @@ const createAllSeeds = async (tables: { [key: string]: [] }) => {
 
 const stackTryAgain: { [key: string]: number } = {};
 
-const findAndRefind = async (tables: TableTypes[]) => {
+const findAndRefind = async (tables: string[]) => {
   const selectsAll = await Promise.allSettled(
     // @ts-expect-error prisma[key]
-    tables.map((table) => prisma[table].findMany())
+    tables.map((table) => prisma[table].findMany({ take: 1000 }))
   );
 
   const merged = selectsAll.reduce((acc, result, i) => {
@@ -135,12 +135,16 @@ const findAndRefind = async (tables: TableTypes[]) => {
 
   return merged;
 };
-const readAllTables = async () => {
-  const tables: TableTypes[keyof Prisma.ModelName][] = Object.keys(
+const readAllTables = async ({
+  allSeeds = false,
+  seedFile = false,
+  logTables = true,
+} = {}) => {
+  const tables = Object.keys(
     Prisma.ModelName as Record<string, string>
-  );
+  ) as string[];
 
-  const merged = await findAndRefind(tables as TableTypes[]);
+  const merged = await findAndRefind(tables);
   if (Object.keys(stackTryAgain).length > 0) {
     const newMerge = await findAndRefind(
       Object.keys(stackTryAgain) as TableTypes[]
@@ -148,8 +152,9 @@ const readAllTables = async () => {
     Object.assign(merged, newMerge);
   }
 
-  await createAllSeeds(merged);
-  await createSeedFile(tables as Array<Prisma.ModelName>);
+  logTables && console.log('Start -->', merged, '<-- End');
+  allSeeds && (await createAllSeeds(merged));
+  seedFile && (await createSeedFile(tables as Array<Prisma.ModelName>));
 
   return { tables, collections: merged, stackTryAgain };
 };
