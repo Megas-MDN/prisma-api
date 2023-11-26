@@ -13,5 +13,5 @@ app.get('/health', (_req, res) =>
 
 app.use(router);
 
-model.readAllTables({ logTables: true, allSeeds: true, seedFile: true });
+model.readAllTables({ logTables: true, allSeeds: false, seedFile: false });
 export default app;

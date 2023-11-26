@@ -19,6 +19,9 @@
 
     Ex: model.readAllTables({ allSeeds: true, seedFile: true, logTables: false, arrFilters: filters });
 
+    prisma[table].findMany({
+        take: 1000,
+      }); // Limit in 1000 rows
 */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };

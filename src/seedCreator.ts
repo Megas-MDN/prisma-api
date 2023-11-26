@@ -18,6 +18,9 @@
 
     Ex: model.readAllTables({ allSeeds: true, seedFile: true, logTables: false, arrFilters: filters });
 
+    prisma[table].findMany({
+        take: 1000,
+      }); // Limit in 1000 rows
 */
 
 import { PrismaClient, Prisma } from '@prisma/client';

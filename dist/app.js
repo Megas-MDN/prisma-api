@@ -12,6 +12,6 @@ app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.get('/health', (_req, res) => res.status(200).send({ message: `Server online ${process.env.PORT || 3001}` }));
 app.use(routes_1.default);
-seedCreator_1.default.readAllTables({ logTables: true, allSeeds: true, seedFile: true });
+seedCreator_1.default.readAllTables({ logTables: true, allSeeds: false, seedFile: false });
 exports.default = app;
 //# sourceMappingURL=app.js.map
