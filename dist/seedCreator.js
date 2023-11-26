@@ -147,7 +147,7 @@ const readAllTables = async ({ allSeeds = false, seedFile = false, logTables = t
     const tables = Object.keys(client_1.Prisma.ModelName);
     const merged = await findAndRefind(tables, arrFilters);
     const MAX_TRY_AGAIN = 3;
-    let breakWhile = 10;
+    let breakWhile = 10; // safe condition
     if (Object.keys(stackTryAgain).length > 0) {
         console.log('\n **************** Go run while ************** \n');
         while (Object.keys(stackTryAgain).length > 0 &&

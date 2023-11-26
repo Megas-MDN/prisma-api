@@ -191,7 +191,7 @@ const readAllTables = async ({
   const merged = await findAndRefind(tables, arrFilters);
 
   const MAX_TRY_AGAIN = 3;
-  let breakWhile = 10;
+  let breakWhile = 10; // safe condition
 
   if (Object.keys(stackTryAgain).length > 0) {
     console.log('\n **************** Go run while ************** \n');
