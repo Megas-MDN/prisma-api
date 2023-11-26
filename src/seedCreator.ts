@@ -6,7 +6,7 @@
     model.readAllTables({ allSeeds: true });
     model.readAllTables({ allSeeds: true, seedFile: true, logTables: false });
     Flag: allSeeds --> Create all seeds from all tables inside the ./prisma/seeds folder (create seeds folder if it doesn't exist)
-    Flag: seedFile --> Create seed.ts file whit all seeds imported
+    Flag: seedFile --> Create seed.ts file with all seeds imported
     Flag: logTables --> Log tables inside the console
 
     filters array: 
