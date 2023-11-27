@@ -21,6 +21,8 @@
     prisma[table].findMany({
         take: 1000,
       }); // Limit in 1000 rows
+
+    After the seeds are created, you shuld run 'npx prisma db seed' (Ps: npx prisma migrate reset maybe dont make the seed all)
 */
 
 import { PrismaClient, Prisma } from '@prisma/client';
