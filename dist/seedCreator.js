@@ -143,8 +143,11 @@ const findAndRefind = async (tables, internalFilters) => {
     }, {});
     return merged;
 };
-const readAllTables = async ({ allSeeds = false, seedFile = false, logTables = true, arrFilters = filters, } = {}) => {
-    const tables = Object.keys(client_1.Prisma.ModelName);
+const readAllTables = async ({ allSeeds = false, seedFile = false, logTables = true, arrFilters = filters, onlyTables = [], // only especific tables
+ } = {}) => {
+    const tables = onlyTables.length > 0
+        ? onlyTables
+        : Object.keys(client_1.Prisma.ModelName);
     const merged = await findAndRefind(tables, arrFilters);
     const MAX_TRY_AGAIN = 3;
     let breakWhile = 10; // safe condition

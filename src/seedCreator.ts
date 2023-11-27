@@ -183,10 +183,12 @@ const readAllTables = async ({
   seedFile = false,
   logTables = true,
   arrFilters = filters,
+  onlyTables = [] as Array<string>, // only especific tables
 } = {}) => {
-  const tables = Object.keys(
-    Prisma.ModelName as Record<string, string>
-  ) as string[];
+  const tables =
+    onlyTables.length > 0
+      ? onlyTables
+      : (Object.keys(Prisma.ModelName as Record<string, string>) as string[]);
 
   const merged = await findAndRefind(tables, arrFilters);
 

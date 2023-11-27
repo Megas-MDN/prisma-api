@@ -13,5 +13,11 @@ app.get('/health', (_req, res) =>
 
 app.use(router);
 
-model.readAllTables({ logTables: true, allSeeds: false, seedFile: false });
+model.readAllTables({
+  logTables: true,
+  allSeeds: false,
+  seedFile: false,
+  onlyTables: ['Recomend'], // optional: default []
+  // arrFilters: filters, // optional: default []
+});
 export default app;
