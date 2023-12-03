@@ -29,6 +29,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.readAllTables = void 0;
 const client_1 = require("@prisma/client");
 const promises_1 = __importDefault(require("fs/promises"));
 const prisma = new client_1.PrismaClient();
@@ -166,5 +167,5 @@ const readAllTables = async ({ allSeeds = false, seedFile = false, logTables = t
     seedFile && (await createSeedFile(tables));
     return { tables, collections: merged, stackTryAgain };
 };
-exports.default = { readAllTables };
+exports.readAllTables = readAllTables;
 //# sourceMappingURL=seedCreator.js.map

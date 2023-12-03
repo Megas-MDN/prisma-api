@@ -180,7 +180,7 @@ const findAndRefind = async (
 
   return merged;
 };
-const readAllTables = async ({
+export const readAllTables = async ({
   allSeeds = false,
   seedFile = false,
   logTables = true,
@@ -218,5 +218,3 @@ const readAllTables = async ({
 
   return { tables, collections: merged, stackTryAgain };
 };
-
-export default { readAllTables };
