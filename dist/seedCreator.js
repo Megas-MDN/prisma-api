@@ -43,11 +43,11 @@ const filters = [
 // { keyToFilter: 'like', replaceTo: true, inTable: 'CommentAndLike' }
 ];
 // Ex: User go to user | CommentAndLike go to commentAndLike
-const lowerFirst = (str) => {
-    return str.charAt(0).toLowerCase() + str.slice(1);
-};
+const snakeToCamel = (str) => str.toLocaleLowerCase().replace(/([-_][a-z])/g, (undeScoreAndString) => {
+    return undeScoreAndString.toUpperCase().replace('-', '').replace('_', '');
+});
 const writeTable = async (table, value) => {
-    const tableNameCamelCase = lowerFirst(table);
+    const tableNameCamelCase = snakeToCamel(table);
     return promises_1.default.writeFile(`./prisma/seeds/${tableNameCamelCase}.ts`, `export const ${tableNameCamelCase} = ${JSON.stringify(value, null, 2)};`);
 };
 const createSeedFile = (tables) => {
@@ -55,7 +55,7 @@ const createSeedFile = (tables) => {
   import { PrismaClient } from '@prisma/client';
   ${tables
         .map((table) => {
-        const tableNameCamelCase = lowerFirst(table);
+        const tableNameCamelCase = snakeToCamel(table);
         return `import { ${tableNameCamelCase} } from './seeds/${tableNameCamelCase}';`;
     })
         .join('\n')}
@@ -65,10 +65,9 @@ const prisma = new PrismaClient();
 async function main() {
   ${tables
         .map((table) => {
-        const tableNameCamelCase = lowerFirst(table);
+        const tableNameCamelCase = snakeToCamel(table);
         return `await prisma.${tableNameCamelCase}.createMany({
     data: ${tableNameCamelCase},
-    skipDuplicates: true,
   });`.trim();
     })
         .join('\n\n')}
