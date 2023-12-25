@@ -1,4 +1,4 @@
-export const user = [
+[
   {
     "id": "clp5kk9gk0000u5z0l1cb6mc3",
     "name": "Megas",
@@ -49,4 +49,4 @@ export const user = [
     "createdAt": "2023-11-19T16:03:38.486Z",
     "updatedAt": "2023-11-19T16:03:38.486Z"
   }
-];
+]

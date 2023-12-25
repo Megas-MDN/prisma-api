@@ -1,4 +1,4 @@
-export const recomend = [
+[
   {
     "id": "clp5lx2o6000du548h4lg3ans",
     "groupId": "clp5lx2o6000du548h4lg3anw",
@@ -6,4 +6,4 @@ export const recomend = [
     "createdAt": "2023-11-19T16:03:38.526Z",
     "updatedAt": "2023-11-19T16:03:38.526Z"
   }
-];
+]

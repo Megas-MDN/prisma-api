@@ -1,4 +1,4 @@
-export const clusterUsers = [
+[
   {
     "id": "clp5o3pn00000u5qwp0fojyrv",
     "userId": "clp5kk9gk0004u5z0rubo5irs",
@@ -90,4 +90,4 @@ export const clusterUsers = [
     "createdAt": "2023-11-19T16:03:38.512Z",
     "updatedAt": "2023-11-19T16:03:38.512Z"
   }
-];
+]

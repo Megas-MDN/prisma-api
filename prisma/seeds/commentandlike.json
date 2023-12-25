@@ -1,4 +1,4 @@
-export const commentAndLike = [
+[
   {
     "id": "clp5lx2o6000du548h4lg3ans",
     "groupId": "clp5lx2o6000du548h4lg3anw",
@@ -19,4 +19,4 @@ export const commentAndLike = [
     "createdAt": "2023-11-19T16:03:38.542Z",
     "updatedAt": "2023-11-19T16:03:38.542Z"
   }
-];
+]

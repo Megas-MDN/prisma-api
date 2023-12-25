@@ -1,4 +1,4 @@
-export const group = [
+[
   {
     "id": "clp5lx2o6000du548h4lg3anw",
     "clusterId": "clp5kvbo00000u56k6kqbfpo7",
@@ -15,4 +15,4 @@ export const group = [
     "createdAt": "2023-11-19T16:03:38.517Z",
     "updatedAt": "2023-11-19T16:03:38.517Z"
   }
-];
+]

@@ -1,4 +1,4 @@
-export const post = [
+[
   {
     "id": "clp5lx2o6000du548h4lg3ans",
     "title": "Post 1",
@@ -17,4 +17,4 @@ export const post = [
     "createdAt": "2023-11-19T16:03:38.530Z",
     "updatedAt": "2023-11-19T16:03:38.530Z"
   }
-];
+]

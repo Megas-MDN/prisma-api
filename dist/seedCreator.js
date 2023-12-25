@@ -1,6 +1,6 @@
 "use strict";
 /*
-    Seed creator v1.0.0 - By Megas
+    Seed creator v2.0.1 - By Megas
     How to use: Import the seedCreator.ts file and call the readAllTables function
     Ex: import model from './seedCreator';
 
@@ -47,39 +47,95 @@ const filters = [
 const snakeToCamel = (str) => str.toLocaleLowerCase().replace(/([-_][a-z])/g, (undeScoreAndString) => {
     return undeScoreAndString.toUpperCase().replace('-', '').replace('_', '');
 });
-const writeTable = async (table, value) => {
+const writeTable = async (table, value, folder) => {
     const tableNameCamelCase = snakeToCamel(table);
-    return promises_1.default.writeFile(`./prisma/seeds/${tableNameCamelCase}.ts`, `export const ${tableNameCamelCase} = ${JSON.stringify(value, null, 2)};`);
+    const dir = `./prisma/${folder}`;
+    await promises_1.default.mkdir(dir, { recursive: true });
+    return promises_1.default.writeFile(`${dir}/${tableNameCamelCase}.json`, `${JSON.stringify(value, null, 2)}`);
 };
-const createSeedFile = (tables) => {
+const createSeedFile = () => {
     const fileString = `
-  import { PrismaClient } from '@prisma/client';
-  ${tables
-        .map((table) => {
-        const tableNameCamelCase = snakeToCamel(table);
-        return `import { ${tableNameCamelCase} } from './seeds/${tableNameCamelCase}';`;
-    })
-        .join('\n')}
+import { Prisma, PrismaClient } from '@prisma/client';
+import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  ${tables
-        .map((table) => {
-        const tableNameCamelCase = snakeToCamel(table);
-        return `await prisma.${tableNameCamelCase}.createMany({
-    data: ${tableNameCamelCase},
-  });`.trim();
-    })
-        .join('\n\n')}
+  let tablesTryAgain: any[] = [];
+  const tables = Object.keys(Prisma.ModelName);
+  let limit = 10;
+  const MAX = limit;
 
+  const snakeToCamel = (str: string) =>
+    str.toLocaleLowerCase().replace(/([-_][a-z0-9])/g, undeScoreAndString => {
+      return undeScoreAndString.toUpperCase().replace('-', '').replace('_', '');
+    });
+
+  const readFile = async (path: string) => {
+    try {
+      const data = await fs.readFile(\`./prisma/seeds/\${path}\`, 'utf8');
+      const dataParse = JSON.parse(data);
+      if (Array.isArray(dataParse)) return dataParse;
+    } catch (error: any) {
+      console.log(error.message, '<---XXX');
+    }
+    return [];
+  };
+
+  const seedTable = async (table: Prisma.ModelName) => {
+    const data = await readFile(\`\${snakeToCamel(table)}.json\`);
+
+    try {
+      tablesTryAgain = tablesTryAgain.filter(t => t !== table);
+      // ~\@ts-expect-error ts(2322): Type 'string' is not assignable to type 'Prisma.ModelName'.
+      await prisma[table].createMany({ data });
+    } catch (error: any) {
+      if (!error.message.toLowerCase().includes('unique constraint')) {
+        console.log('\\n XXXXXXXXX ', error.message, '\\n', table, '<---Adding in try Again XXXXX');
+        tablesTryAgain.push(table);
+      }
+    }
+  };
+
+  const dropAll = async (arrTables = tables) => {
+    for (let i = 0; i < arrTables.length; i++) {
+      const table = arrTables[i];
+      try {
+        tablesTryAgain = tablesTryAgain.filter(t => t !== table);
+        // ~\@ts-expect-error ts(2322): Type 'string' is not assignable to type 'Prisma.ModelName'.
+        await prisma[table].deleteMany({});
+      } catch (error: any) {
+        tablesTryAgain.push(table);
+        console.log('\\n XXXXXXXXX ', '\\n', table, '<--- FAIL TO DROPED XXXXX', tablesTryAgain, '\\n');
+      }
+    }
+  };
+  const seedAll = async () => {
+    for (let i = 0; i < tables.length; i++) {
+      await seedTable(tables[i] as Prisma.ModelName);
+    }
+  };
+  console.clear();
+
+  const isDroped = true;
+  const action = isDroped ? dropAll : seedAll;
+
+  await action();
+
+  if (tablesTryAgain.length > 0) {
+    while (tablesTryAgain.length > 0 && limit-- > 0) {
+      await action(tablesTryAgain);
+    }
+  }
+
+  console.log('The end', tablesTryAgain, '<-- Tables to seed (Fails) | Number of trys: ', MAX - limit);
 }
 
 main()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async (e) => {
+  .catch(async e => {
     console.error(e);
     await prisma.$disconnect();
     process.exit(1);
@@ -103,11 +159,9 @@ const filteredFields = (obj, filter) => {
             if (replaceTo === undefined) {
                 return acc;
             }
-            // @ts-expect-error acc[key] = replaceTo
             acc[key] = replaceTo;
             return acc;
         }
-        // @ts-expect-error acc[key] = obj[key]
         acc[key] = obj[key];
         return acc;
     }, {});
@@ -120,22 +174,22 @@ const filterTables = (obj, filters, key) => {
         return filteredFields(acc, filter);
     }, obj);
 };
-const createAllSeeds = async (tables) => {
+const createAllSeeds = async (tables, folder) => {
     await Promise.allSettled(Object.keys(tables).map((key) => {
-        writeTable(key, tables[key]);
+        writeTable(key, tables[key], folder);
     }));
 };
 // Stack to try again -- Tables to re try the find All if some promisse is rejected.
 const stackTryAgain = {};
 const findAndRefind = async (tables, internalFilters) => {
     const selectsAll = await Promise.allSettled(tables.map((table) => {
-        // @ts-expect-error prisma[key]
         return prisma[table].findMany({
             take: 1000,
         });
     }));
     const merged = selectsAll.reduce((acc, result, i) => {
         if (result.status !== 'fulfilled') {
+            console.log('Error', result.reason, '<---Try Again XXXXX');
             stackTryAgain[tables[i]] = (stackTryAgain[tables[i]] || 0) + 1;
             return acc;
         }
@@ -146,14 +200,15 @@ const findAndRefind = async (tables, internalFilters) => {
     return merged;
 };
 const readAllTables = async ({ allSeeds = false, seedFile = false, logTables = true, arrFilters = filters, onlyTables = [], // only especific tables
- } = {}) => {
+folderName = 'seeds', } = {}) => {
     const tables = onlyTables.length > 0
         ? onlyTables
         : Object.keys(client_1.Prisma.ModelName);
-    const merged = await findAndRefind(tables, arrFilters);
+    const merged = !allSeeds ? {} : await findAndRefind(tables, arrFilters);
     const MAX_TRY_AGAIN = 3;
     let breakWhile = 10; // safe condition
     if (Object.keys(stackTryAgain).length > 0) {
+        console.log(JSON.stringify(stackTryAgain, null, 2), '<--- stackTryAgain');
         console.log('\n **************** Go run while ************** \n');
         while (Object.keys(stackTryAgain).length > 0 &&
             Object.values(stackTryAgain).some((v) => v < MAX_TRY_AGAIN) &&
@@ -163,9 +218,19 @@ const readAllTables = async ({ allSeeds = false, seedFile = false, logTables = t
         }
     }
     logTables && console.log('Start -->', merged, '<-- End');
-    allSeeds && (await createAllSeeds(merged));
-    seedFile && (await createSeedFile(tables));
+    allSeeds && (await createAllSeeds(merged, folderName));
+    seedFile && (await createSeedFile());
+    console.log('Done ---');
     return { tables, collections: merged, stackTryAgain };
 };
 exports.readAllTables = readAllTables;
+// import './seedCreator';
+// /*
+(0, exports.readAllTables)({
+    allSeeds: true,
+    seedFile: true,
+    logTables: false,
+    onlyTables: [],
+});
+//  */
 //# sourceMappingURL=seedCreator.js.map

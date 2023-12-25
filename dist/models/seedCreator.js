@@ -73,11 +73,9 @@ const filteredFields = (obj, filter) => {
             if (replaceTo === undefined) {
                 return acc;
             }
-            // @ts-expect-error acc[key] = replaceTo
             acc[key] = replaceTo;
             return acc;
         }
-        // @ts-expect-error acc[key] = obj[key]
         acc[key] = obj[key];
         return acc;
     }, {});
@@ -97,16 +95,13 @@ const createAllSeeds = async (tables) => {
 };
 const stackTryAgain = {};
 const findAndRefind = async (tables) => {
-    const selectsAll = await Promise.allSettled(
-    // @ts-expect-error prisma[key]
-    tables.map((table) => _1.default[table].findMany({ take: 1000 })));
+    const selectsAll = await Promise.allSettled(tables.map((table) => _1.default[table].findMany({ take: 1000 })));
     const merged = selectsAll.reduce((acc, result, i) => {
         if (result.status !== 'fulfilled') {
             stackTryAgain[tables[i]] = (stackTryAgain[tables[i]] || 0) + 1;
             return acc;
         }
         delete stackTryAgain[tables[i]];
-        // @ts-expect-error stackTryAgain[tables[i]]
         acc[tables[i]] = result.value.map((item) => filterTables(removeNullElements(item), filters, tables[i]));
         return acc;
     }, {});

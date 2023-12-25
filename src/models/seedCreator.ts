@@ -84,11 +84,9 @@ const filteredFields = <T, U>(obj: T, filter: IFilter<U>) => {
       if (replaceTo === undefined) {
         return acc;
       }
-      // @ts-expect-error acc[key] = replaceTo
       acc[key] = replaceTo;
       return acc;
     }
-    // @ts-expect-error acc[key] = obj[key]
     acc[key] = obj[key];
     return acc;
   }, {});
@@ -115,7 +113,6 @@ const stackTryAgain: { [key: string]: number } = {};
 
 const findAndRefind = async (tables: string[]) => {
   const selectsAll = await Promise.allSettled(
-    // @ts-expect-error prisma[key]
     tables.map((table) => prisma[table].findMany({ take: 1000 }))
   );
 
@@ -126,7 +123,6 @@ const findAndRefind = async (tables: string[]) => {
     }
 
     delete stackTryAgain[tables[i]];
-    // @ts-expect-error stackTryAgain[tables[i]]
     acc[tables[i]] = result.value.map((item) =>
       filterTables(removeNullElements(item), filters, tables[i] as string)
     );
